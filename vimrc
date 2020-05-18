@@ -29,7 +29,8 @@ set splitbelow
 
 " For indents that consist of 4 space characters but are entered by pressing the 
 " tab key
-set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
+" set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
+set tabstop=4
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " SETTING OPTIONS END
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -40,9 +41,9 @@ set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
 " KEY BINDINGS BEGIN
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let mapleader = ","
-" binding to open up vimrc for a quick edit
+" Key binding to open up vimrc for a quick edit
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
-" binding to source vimrc after a quick edit
+" Key binding to source vimrc after a quick edit
 nnoremap <leader>sv :source $MYVIMRC<cr>
 
 " Key bindings to make navigation between split windows easier "
@@ -107,7 +108,6 @@ autocmd BufWinEnter *.* silent loadview
 let python3path = system("which python3")
 let shebangline = "#! ".python3path
 autocmd BufNewFile *.py execute "0put = shebangline"
-autocmd BufWrite * :echo "lekha hoy gyachhe"
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " AUTOCOMMANDS END
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
