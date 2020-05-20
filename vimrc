@@ -29,8 +29,7 @@ set splitbelow
 
 " For indents that consist of 4 space characters but are entered by pressing the 
 " tab key
-" set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
-set tabstop=4
+set tabstop=8 softtabstop=0 expandtab  smarttab
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " SETTING OPTIONS END
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -41,10 +40,47 @@ set tabstop=4
 " KEY BINDINGS BEGIN
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let mapleader = ","
+
+" To have ,w for saving a file while in insert mode
+inoremap <leader>w <esc>:w<cr>
+nnoremap <leader>w <esc>:w<cr>
+vnoremap <leader>w <esc>:w<cr>
+
 " Key binding to open up vimrc for a quick edit
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 " Key binding to source vimrc after a quick edit
 nnoremap <leader>sv :source $MYVIMRC<cr>
+
+" move the current line down by one line by pressing -
+nnoremap <leader>j ddp   
+" move the current line up by one line by pressing _
+nnoremap <leader>k ddkP  
+
+" Surround plugin in normal mode - leaves you in normal mode after execution
+nnoremap <leader>" viw<esc>a"<esc>bi"<esc>le
+nnoremap <leader>' viw<esc>a'<esc>bi'<esc>le
+nnoremap <leader>( viw<esc>a)<esc>bi(<esc>le
+nnoremap <leader>{ viw<esc>a}<esc>bi{<esc>le
+nnoremap <leader>[ viw<esc>a]<esc>bi[<esc>le
+
+" Surround plugin in visual mode - leaves you in normal mode after execution
+vnoremap <leader>" <esc>`>a"<esc>`<i"<esc>`>
+vnoremap <leader>' <esc>`>a'<esc>`<i'<esc>`>
+vnoremap <leader>( <esc>`>a)<esc>`<i(<esc>`>
+vnoremap <leader>{ <esc>`>a}<esc>`<i{<esc>`>
+vnoremap <leader>[ <esc>`>a]<esc>`<i[<esc>`>
+
+" To replace $ with ,4 for operator pending motions
+onoremap <leader>4 $
+
+" To replace $ with ,4 for moving to the end of line
+nnoremap <leader>4 $
+vnoremap <leader>4 $
+
+" To relieve stress on the left hand 
+inoremap jk <esc>
+" To force the use of the above mapping
+inoremap <esc> <nop>
 
 " Key bindings to make navigation between split windows easier "
 inoremap <C-h> <C-\><C-N><C-w>h
@@ -56,41 +92,17 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
-" move the current line down by one line by pressing -
-nnoremap - ddp   
-" move the current line up by one line by pressing +
-nnoremap _ ddkP  
+" Keybinding to comment out a visually selected block of code in python
+ autocmd filetype python vnoremap <leader>m <S-i>#<esc>
 
-" Surround plugin in normal mode - leaves you in normal mode after execution
-nnoremap <leader>" viw<esc>a"<esc>bi"<esc>lel
-nnoremap <leader>' viw<esc>a'<esc>bi'<esc>lel
-nnoremap <leader>( viw<esc>a)<esc>bi(<esc>lel
-nnoremap <leader>{ viw<esc>a}<esc>bi{<esc>lel
-nnoremap <leader>[ viw<esc>a]<esc>bi[<esc>lel
+" Bindings to interchange the character written in one line with the character 
+" in the line below, specifically for writing guitar tabs.
+" has plenty of edge cases where it fails
+" move the current character down by one line by pressing -
+nnoremap s- xjphxkhpj
+" move the current character up by one line by pressing _
+nnoremap s_ xkphxjhpk
 
-" Surround plugin in visual mode - leaves you in normal mode after execution
-vnoremap <leader>" <esc>`>a"<esc>`<i"<esc>`>
-vnoremap <leader>' <esc>`>a'<esc>`<i'<esc>`>
-vnoremap <leader>( <esc>`>a)<esc>`<i(<esc>`>
-vnoremap <leader>{ <esc>`>a}<esc>`<i{<esc>`>
-vnoremap <leader>[ <esc>`>a]<esc>`<i[<esc>`>
-
-" To relieve stress on the left hand 
-inoremap jk <esc>
-vnoremap jk <esc>
-" To force the use of the above mapping
-inoremap <esc> <nop>
-
-" To replace $ with ,4 for moving to the end of line
-nnoremap <leader>4 $
-vnoremap <leader>4 $
-
-" To replace $ with ,4 for operator pending motions
-onoremap <leader>4 $
-
-" To have ,w for saving a file while in insert mode
-inoremap <leader>w <esc>:w<cr>
-nnoremap <leader>w <esc>:w<cr>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " KEY BINDINGS END
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
