@@ -141,9 +141,46 @@ autocmd BufWinEnter *.* silent loadview
 
 " To create python files with the shebang already at the top
 let python3path = system("which python3")
-let shebangline = "#! ".python3path
+let shebangline = "#!".python3path
 autocmd BufNewFile *.py execute "0put = shebangline"
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " AUTOCOMMANDS END
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-vnoremap <leader>ft yP'>mzgv:s/=.\+//<cr>:let a = line("'>") - line("'<") + 1<cr>:execute "normal! ".(2*a)."k"<cr>jV'<k:s/.\+=/=/<cr>j<C-v>'z$d:execute "normal! ".a."k"<cr>P}dipO
+
+function! Formatwala()
+    " Move to one line above the beginning of the visually selected area
+    execute "normal! '<k"
+
+    " Create a list that holds the col nos of the equals signs
+    let l:eqSignPos = []
+
+    " Loop over all lines to get the col nos of the equals signs
+    for l:i in range(line("'<"), line("'>"))
+        execute "normal! j0f="
+        call add(l:eqSignPos, col("."))
+    endfor
+
+    " Get the max value of the cols of the equals signs
+    let l:maxEqCol = max(eqSignPos)
+
+    " Go back to the beginning of the visually selected area
+    execute "normal! '<"
+
+    " Variable for indexing eqSignPos
+    let l:j = 0
+
+    " Second loop for shifting all the equal signs
+    for l:i in range(line("'<"), line("'>"))
+        let l:indentSpaces = ""
+
+        for l:k in range(eqSignPos[l:j] + 1, maxEqCol)
+            let l:indentSpaces = l:indentSpaces . " "
+        endfor
+
+        execute "normal! 0f=i".l:indentSpaces
+        let l:j += 1
+        execute "normal! j"
+    endfor
+endfunction
+
+vnoremap <leader>ff <esc>:call Formatwala()<cr>
