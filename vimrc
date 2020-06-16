@@ -152,16 +152,17 @@ autocmd BufNewFile *.py execute "0put = shebangline"
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! Formatwala()
-    " Move to one line above the beginning of the visually selected area
-    execute "normal! '<k"
+    " Move to the line at the start of the visually selected area
+    execute "normal! '<"
 
     " Create a list that holds the col nos of the equals signs
     let l:eqSignPos = []
 
     " Loop over all lines to get the col nos of the equals signs
     for l:i in range(line("'<"), line("'>"))
-        execute "normal! j0f="
+        execute "normal! 0f="
         call add(l:eqSignPos, col("."))
+        execute "normal! j"
     endfor
 
     " Get the max value of the cols of the equals signs
@@ -170,19 +171,14 @@ function! Formatwala()
     " Go back to the beginning of the visually selected area
     execute "normal! '<"
 
-    " Variable for indexing eqSignPos
-    let l:j = 0
-
-    " Second loop for shifting all the equal signs
-    for l:i in range(line("'<"), line("'>"))
+    for l:colno in l:eqSignPos
         let l:indentSpaces = ""
 
-        for l:k in range(eqSignPos[l:j] + 1, maxEqCol)
+        for l:k in range(l:colno + 1, l:maxEqCol)
             let l:indentSpaces = l:indentSpaces . " "
         endfor
 
         execute "normal! 0f=i".l:indentSpaces
-        let l:j += 1
         execute "normal! j"
     endfor
 endfunction
