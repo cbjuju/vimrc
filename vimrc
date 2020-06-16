@@ -17,7 +17,7 @@ set splitright
 set splitbelow
 
 " Show the statusline at the bottom of the buffer using string interpolation
-" set laststatus=2          " Ensures that the status line will show up at the bottom
+set laststatus=2          " Ensures that the status line will show up at the bottom
 " set statusline=%F         " Full path to the file. Lowercase f for relative path
 " set statusline+=\ -\      " Separator
 " set statusline+=FileType: " Label
@@ -34,6 +34,10 @@ set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
 
 " Allows the user to see five lines below where the cursor is
 set scrolloff=5
+
+" Set column 80 to a different colour
+let &colorcolumn=join(range(81,999),",")
+highlight ColorColumn ctermbg=235 guibg=#2c2d27
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " SETTING OPTIONS END
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
