@@ -151,7 +151,7 @@ autocmd BufNewFile *.py execute "0put = shebangline"
 " AUTOCOMMANDS END
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-function! Formatwala()
+function! FormatWalaFunction1()
     " Move to the line at the start of the visually selected area
     execute "normal! '<"
 
@@ -175,7 +175,7 @@ function! Formatwala()
         let l:indentSpaces = ""
 
         for l:k in range(l:colno + 1, l:maxEqCol)
-            let l:indentSpaces = l:indentSpaces . " "
+            let l:indentSpaces = l:indentSpaces." "
         endfor
 
         execute "normal! 0f=i".l:indentSpaces
@@ -183,4 +183,44 @@ function! Formatwala()
     endfor
 endfunction
 
-vnoremap <leader>ff <esc>:call Formatwala()<cr>
+vnoremap <leader>f1 <esc>:call FormatWalaFunction1()<cr>
+
+function! FormatWalaFunction2()
+    " search for whatever expression is in register s
+    execute "\/\\%V\\V".@"
+
+    " array for holding the col nos. of all the matches
+    let l:colNos = []
+
+    " move to the last match and record the line & col number
+    execute "normal! GN"
+    call add(l:colNos, col("."))
+    let l:lastLine = line(".")
+    " the line number of the last match is needed for stopping the loops
+
+    " move to the first match and record col number
+    execute "normal! ggn"
+    call insert(l:colNos, col("."), -1)
+
+    " move to the second match to record all the matches
+    execute "normal! n"
+
+    while line(".") < l:lastLine
+        call insert(l:colNos, col("."), -1)
+        execute "normal! n"
+    endwhile
+
+    let l:maxCol = max(l:colNos)
+
+    execute "normal! ggn"
+    echo l:colNos
+
+    for l:col in l:colNos
+        for l:space in range(l:col + 1, l:maxCol)
+            execute "normal! i "
+        endfor
+        execute "normal! En"
+    endfor
+endfunction
+
+vnoremap <leader>f2 <esc>:call FormatWalaFunction2()<cr>
