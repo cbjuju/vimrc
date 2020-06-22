@@ -1,18 +1,20 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " SETTING OPTIONS BEGIN
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" No need to be compatible with vi "
+" No need to be compatible with vi 
 set nocp 	
 
-" For ease of vertical navigation "
+" For ease of vertical navigation 
 set number
-set rnu
 
-" Syntax support for different languages "
+" Wrapped text looks ugly with the limitation at column 80
+set nowrap
+
+" Syntax support for different languages 
 syntax on
 syntax enable
 
-" Splitting to the right and below is more intuitive "
+" Splitting to the right and below is more intuitive 
 set splitright
 set splitbelow
 
@@ -32,9 +34,12 @@ set laststatus=2          " Ensures that the status line will show up at the bot
 " tab key
 set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
 
-" Allows the user to see five lines below where the cursor is
+" Allows the user to see five lines below where the cursor is. If someone uses
+" zt in normal mode then the current line under the cursor will not jump to the
+" top but to five lines below the top. Similar with zb
 set scrolloff=5
 
+colorscheme pablo
 " Set column 80 to a different colour
 let &colorcolumn=join(range(81,999),",")
 highlight ColorColumn ctermbg=235 guibg=#2c2d27
@@ -190,37 +195,60 @@ function! FormatWalaFunction2()
     execute "\/\\%V\\V".@"
 
     " array for holding the col nos. of all the matches
-    let l:colNos = []
+    let s:colNos = []
 
     " move to the last match and record the line & col number
     execute "normal! GN"
-    call add(l:colNos, col("."))
-    let l:lastLine = line(".")
+    call add(s:colNos, col("."))
+    let s:lastLine = line(".")
     " the line number of the last match is needed for stopping the loops
 
     " move to the first match and record col number
     execute "normal! ggn"
-    call insert(l:colNos, col("."), -1)
+    call insert(s:colNos, col("."), -1)
 
     " move to the second match to record all the matches
     execute "normal! n"
 
-    while line(".") < l:lastLine
-        call insert(l:colNos, col("."), -1)
+    while line(".") < s:lastLine
+        call insert(s:colNos, col("."), -1)
         execute "normal! n"
     endwhile
 
-    let l:maxCol = max(l:colNos)
+    let s:maxCol = max(s:colNos)
 
     execute "normal! ggn"
-    echo l:colNos
+    echo s:colNos
 
-    for l:col in l:colNos
-        for l:space in range(l:col + 1, l:maxCol)
+    for s:col in s:colNos
+        for s:space in range(s:col + 1, s:maxCol)
             execute "normal! i "
         endfor
         execute "normal! En"
     endfor
 endfunction
-
 vnoremap <leader>f2 <esc>:call FormatWalaFunction2()<cr>
+
+function! Box()
+    let @q = "| "
+    let s:maxCol = 0
+    execute "normal! '<"
+    for s:line in range(line("'<"), line("'>"))
+        let s:maxCol = s:maxCol < col("$") ? col("$") : s:maxCol
+        execute "normal! j"
+    endfor
+    execute "normal! '<"
+    for s:line in range(line("'<"), line("'>"))
+        execute "normal! $"
+        for s:space in range(col(".") + 1, s:maxCol)
+            execute "normal! a "
+        endfor
+        execute "normal! \"qp0\"qPj"
+    endfor
+    execute "normal '>o "
+    for s:col in range(0, s:maxCol)
+        execute "normal a-"
+    endfor
+    execute "normal! yy'<P`>"
+endfunction
+vnoremap <leader>box <esc>:call Box()<cr>
