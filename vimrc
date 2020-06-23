@@ -137,6 +137,9 @@ nnoremap s_ xkphxjhpk
 " text copied from the internet
 nnoremap <leader>l :s/\[200\~//<cr>:s/\[201\~//<cr>A
 vnoremap <leader>l :s/\[200\~\\|\[201\~//g<cr>
+
+" Binding for toggling relative line numbers
+nnoremap <leader>rn :set rnu!<cr>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " KEY BINDINGS END
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
