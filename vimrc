@@ -5,10 +5,8 @@
 set nocp 	
 
 " For ease of vertical navigation 
+set rnu
 set number
-
-" Wrapped text looks ugly with the limitation at column 80
-set nowrap
 
 " Syntax support for different languages 
 syntax on
@@ -39,23 +37,22 @@ set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
 " top but to five lines below the top. Similar with zb
 set scrolloff=5
 
+set incsearch
+set hlsearch
+
 colorscheme pablo
-" Set column 80 to a different colour
-let &colorcolumn=join(range(81,999),",")
-highlight ColorColumn ctermbg=235 guibg=#2c2d27
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" SETTING OPTIONS END
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" SETTING OPTIONS END
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " KEY BINDINGS BEGIN
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let mapleader = ","
 
-" To have ,w for saving a file while in insert mode
+" To write the buffer to the file from the homerow
 inoremap <leader>w <esc>:w<cr>
 nnoremap <leader>w <esc>:w<cr>
-vnoremap <leader>w <esc>:w<cr>
 
 " To save and quit vim using leader key
 nnoremap <leader>q <esc>:wq<cr>
@@ -107,14 +104,14 @@ inoremap jk <esc>
 inoremap <esc> <nop>
 
 " Key bindings to make navigation between split windows easier "
-inoremap <C-h> <C-\><C-N><C-w>h
-inoremap <C-j> <C-\><C-N><C-w>j
-inoremap <C-k> <C-\><C-N><C-w>k
-inoremap <C-l> <C-\><C-N><C-w>l
-nnoremap <C-h> <C-w>h
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-l> <C-w>l
+inoremap <S-h> <C-\><C-N><C-w>h
+inoremap <S-j> <C-\><C-N><C-w>j
+inoremap <S-k> <C-\><C-N><C-w>k
+inoremap <S-l> <C-\><C-N><C-w>l
+nnoremap <S-h> <C-w>h
+nnoremap <S-j> <C-w>j
+nnoremap <S-k> <C-w>k
+nnoremap <S-l> <C-w>l
 
 " for block commenting in python
 autocmd filetype python vnoremap <leader># <esc>`>o"""<esc>`<O"""<esc>}
@@ -125,14 +122,6 @@ autocmd filetype python vnoremap <leader>3 <esc>`>dd`<dd}
 " console log shortcut for javascript files
 autocmd filetype javascript inoremap <leader>cl console.log()<esc>i
 
-" Bindings to interchange the character written in one line with the character 
-" in the line below, specifically for writing guitar tabs.
-" has plenty of edge cases where it fails
-" move the current character down by one line by pressing -
-nnoremap s- xjphxkhpj
-" move the current character up by one line by pressing _
-nnoremap s_ xkphxjhpk
-
 " Binding to delete the characters [200~ and [201~ at the beginning and end of
 " text copied from the internet
 nnoremap <leader>l :s/\[200\~//<cr>:s/\[201\~//<cr>A
@@ -140,7 +129,7 @@ vnoremap <leader>l :s/\[200\~\\|\[201\~//g<cr>
 
 " Binding for toggling relative line numbers
 nnoremap <leader>rn :set rnu!<cr>
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " KEY BINDINGS END
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -148,8 +137,8 @@ nnoremap <leader>rn :set rnu!<cr>
 " AUTOCOMMANDS BEGIN
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " To save the current view and load it when the file is reopened "
-autocmd BufWinLeave *.* mkview
-autocmd BufWinEnter *.* silent loadview
+" autocmd BufWinLeave *.* mkview
+" autocmd BufWinEnter *.* silent loadview
 
 " To create python files with the shebang already at the top
 let python3path = system("which python3")
@@ -190,11 +179,10 @@ function! FormatWalaFunction1()
         execute "normal! j"
     endfor
 endfunction
-
 vnoremap <leader>f1 <esc>:call FormatWalaFunction1()<cr>
 
 function! FormatWalaFunction2()
-    " search for whatever expression is in register s
+    " search for whatever expression is in register "
     execute "\/\\%V\\V".@"
 
     " array for holding the col nos. of all the matches
@@ -231,27 +219,3 @@ function! FormatWalaFunction2()
     endfor
 endfunction
 vnoremap <leader>f2 <esc>:call FormatWalaFunction2()<cr>
-
-function! Box()
-    let @q = "| "
-    let s:maxCol = 0
-    execute "normal! '<"
-    for s:line in range(line("'<"), line("'>"))
-        let s:maxCol = s:maxCol < col("$") ? col("$") : s:maxCol
-        execute "normal! j"
-    endfor
-    execute "normal! '<"
-    for s:line in range(line("'<"), line("'>"))
-        execute "normal! $"
-        for s:space in range(col(".") + 1, s:maxCol)
-            execute "normal! a "
-        endfor
-        execute "normal! \"qp0\"qPj"
-    endfor
-    execute "normal '>o "
-    for s:col in range(0, s:maxCol)
-        execute "normal a-"
-    endfor
-    execute "normal! yy'<P`>"
-endfunction
-vnoremap <leader>box <esc>:call Box()<cr>
