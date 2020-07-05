@@ -38,7 +38,6 @@ set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
 set scrolloff=5
 
 set incsearch
-set hlsearch
 
 colorscheme pablo
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -104,14 +103,17 @@ inoremap jk <esc>
 inoremap <esc> <nop>
 
 " Key bindings to make navigation between split windows easier "
-inoremap <S-h> <C-\><C-N><C-w>h
-inoremap <S-j> <C-\><C-N><C-w>j
-inoremap <S-k> <C-\><C-N><C-w>k
-inoremap <S-l> <C-\><C-N><C-w>l
-nnoremap <S-h> <C-w>h
-nnoremap <S-j> <C-w>j
-nnoremap <S-k> <C-w>k
-nnoremap <S-l> <C-w>l
+" The use of C-k below disables the use of digraphs but I don't see
+" a use for digraphs for myself anyway so I am okay with this
+inoremap <C-h> <C-\><C-N><C-w>h
+inoremap <C-j> <C-\><C-N><C-w>j
+inoremap <C-k> <C-\><C-N><C-w>k
+inoremap <C-l> <C-\><C-N><C-w>l
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
 
 " for block commenting in python
 autocmd filetype python vnoremap <leader># <esc>`>o"""<esc>`<O"""<esc>}
@@ -182,34 +184,36 @@ endfunction
 vnoremap <leader>f1 <esc>:call FormatWalaFunction1()<cr>
 
 function! FormatWalaFunction2()
-    " search for whatever expression is in register "
+    " search for whatever expression is in the unnamed register
     execute "\/\\%V\\V".@"
 
     " array for holding the col nos. of all the matches
     let s:colNos = []
 
     " move to the last match and record the line & col number
-    execute "normal! GN"
+    execute "normal! `>N"
     call add(s:colNos, col("."))
     let s:lastLine = line(".")
     " the line number of the last match is needed for stopping the loops
 
     " move to the first match and record col number
-    execute "normal! ggn"
+    execute "normal! `<n"
     call insert(s:colNos, col("."), -1)
 
-    " move to the second match to record all the matches
+    " move to the second match to start recording all the matches
     execute "normal! n"
 
+    " loop to record the column numbers of all the matches
     while line(".") < s:lastLine
         call insert(s:colNos, col("."), -1)
         execute "normal! n"
     endwhile
 
+    " maximum column number
     let s:maxCol = max(s:colNos)
 
-    execute "normal! ggn"
-    echo s:colNos
+    " Move to the first match to start the formatting process
+    execute "normal! `<n"
 
     for s:col in s:colNos
         for s:space in range(s:col + 1, s:maxCol)
