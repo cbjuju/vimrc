@@ -18,7 +18,7 @@ set splitbelow
 
 " Show the statusline at the bottom of the buffer using string interpolation
 set laststatus=2          " Ensures that the status line will show up at the bottom
-" set statusline=%F         " Full path to the file. Lowercase f for relative path
+set statusline=%F         " Full path to the file. Lowercase f for relative path
 " set statusline+=\ -\      " Separator
 " set statusline+=FileType: " Label
 " set statusline+=%y        " Filetype of the file
@@ -105,14 +105,14 @@ inoremap <esc> <nop>
 " Key bindings to make navigation between split windows easier "
 " The use of C-k below disables the use of digraphs but I don't see
 " a use for digraphs for myself anyway so I am okay with this
-inoremap <C-h> <C-\><C-N><C-w>h
-inoremap <C-j> <C-\><C-N><C-w>j
-inoremap <C-k> <C-\><C-N><C-w>k
-inoremap <C-l> <C-\><C-N><C-w>l
-nnoremap <C-h> <C-w>h
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-l> <C-w>l
+inoremap <leader>m <C-\><C-N><C-w>h
+inoremap <leader>j <C-\><C-N><C-w>j
+inoremap <leader>k <C-\><C-N><C-w>k
+inoremap <leader>l <C-\><C-N><C-w>l
+nnoremap <leader>m <C-w>h
+nnoremap <leader>j <C-w>j
+nnoremap <leader>k <C-w>k
+nnoremap <leader>l <C-w>l
 
 
 " for block commenting in python
@@ -126,8 +126,8 @@ autocmd filetype javascript inoremap <leader>cl console.log()<esc>i
 
 " Binding to delete the characters [200~ and [201~ at the beginning and end of
 " text copied from the internet
-nnoremap <leader>l :s/\[200\~//<cr>:s/\[201\~//<cr>A
-vnoremap <leader>l :s/\[200\~\\|\[201\~//g<cr>
+nnoremap <leader>cl :s/\[200\~//<cr>:s/\[201\~//<cr>A
+vnoremap <leader>cl :s/\[200\~\\|\[201\~//g<cr>
 
 " Binding for toggling relative line numbers
 nnoremap <leader>rn :set rnu!<cr>
@@ -184,42 +184,56 @@ endfunction
 vnoremap <leader>f1 <esc>:call FormatWalaFunction1()<cr>
 
 function! FormatWalaFunction2()
-    " search for whatever expression is in the unnamed register
+    " search inside visually selected area for whatever expression is in the unnamed register
+    " all the extra backslashes are to escape whatever comes after it
     execute "\/\\%V\\V".@"
 
     " array for holding the col nos. of all the matches
     let s:colNos = []
 
+    " move to the first match to find the first col numeber of the visually selected area
+    execute "normal! `<"
+    let s:minCol = col(".")
+
     " move to the last match and record the line & col number
-    execute "normal! `>N"
+    execute "normal! '>".(s:minCol - 1)."ln"
     call add(s:colNos, col("."))
     let s:lastLine = line(".")
     " the line number of the last match is needed for stopping the loops
 
     " move to the first match and record col number
-    execute "normal! `<n"
-    call insert(s:colNos, col("."), -1)
-
-    " move to the second match to start recording all the matches
+    execute "normal! '<"
+    execute "normal! '<".(s:minCol - 1)."l"
     execute "normal! n"
-
-    " loop to record the column numbers of all the matches
-    while line(".") < s:lastLine
-        call insert(s:colNos, col("."), -1)
-        execute "normal! n"
-    endwhile
-
-    " maximum column number
-    let s:maxCol = max(s:colNos)
-
-    " Move to the first match to start the formatting process
-    execute "normal! `<n"
-
-    for s:col in s:colNos
-        for s:space in range(s:col + 1, s:maxCol)
-            execute "normal! i "
-        endfor
-        execute "normal! En"
-    endfor
+"    call insert(s:colNos, col("."), -1)
+"
+"    " move to the second match to start recording all the matches
+"    let s:scm = "normal! j"
+"    ".(s:minCol - 1)."|n"
+"    execute s:scm
+"    echo s:scm
+"
+"    " loop to record the column numbers of all the matches
+"    while line(".") < s:lastLine
+"        call insert(s:colNos, col("."), -1)
+"        execute "normal! j".s:minCol."|n"
+"    endwhile
+"
+"    " maximum column number
+"    let s:maxCol = max(s:colNos)
+"    let s:maxmin = [s:minCol, s:maxCol]
+"    echo s:maxmin
+"
+"    " Move to the first match to start the formatting process
+"    execute "normal! '<".s:minCol."|n"
+"
+"    for s:col in s:colNos
+""    for s:i in range(0, 0)
+""        let s:col = s:colNos[s:i]
+"        for s:space in range(s:col + 1, s:maxCol)
+"            execute "normal! i "
+"        endfor
+"        execute "normal! j".s:minCol."|n"
+"    endfor
 endfunction
 vnoremap <leader>f2 <esc>:call FormatWalaFunction2()<cr>
