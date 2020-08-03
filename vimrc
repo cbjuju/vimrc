@@ -16,17 +16,19 @@ syntax enable
 set splitright
 set splitbelow
 
+"colorscheme pulumi
+colorscheme pablo
+
 " Show the statusline at the bottom of the buffer using string interpolation
 set laststatus=2          " Ensures that the status line will show up at the bottom
 set statusline=%F         " Full path to the file. Lowercase f for relative path
-" set statusline+=\ -\      " Separator
-" set statusline+=FileType: " Label
-" set statusline+=%y        " Filetype of the file
-" set statusline+=%=        " Switch to the right side
-" set statusline+=%l	  " Current line
-" set statusline+=/	  " Separator
-" set statusline+=%L,	  " Total lines
-" set statusline+=%c        " Number of columns
+set statusline+=\ -\      " Separator
+set statusline+=%y        " Filetype of the file
+set statusline+=%=        " Switch to the right side
+set statusline+=%l	  " Current line
+set statusline+=/	  " Separator
+set statusline+=%L,	  " Total lines
+set statusline+=%c        " Number of columns
 
 " For indents that consist of 4 space characters but are entered by pressing the 
 " tab key
@@ -38,8 +40,8 @@ set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
 set scrolloff=5
 
 set incsearch
-
-colorscheme pablo
+"highlight ColorColumn ctermbg=grey
+"set colorcolumn=80
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " SETTING OPTIONS END
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -66,10 +68,6 @@ nnoremap <leader>sv :source $MYVIMRC<cr>
 nnoremap <leader>o o<esc>o<esc>i
 " To create two new lines below the current line and enter insert mode
 nnoremap <leader>O O<esc>O<esc>i
-" move the current line down by one line by pressing -
-nnoremap - ddp   
-" move the current line up by one line by pressing _
-nnoremap _ ddkP  
 
 " Add a semicolon to the end of the line 
 nnoremap <leader>; mqA;<esc>`q
@@ -82,6 +80,8 @@ nnoremap <leader>' viw<esc>a'<esc>bi'<esc>lel
 nnoremap <leader>( viw<esc>a)<esc>bi(<esc>lel
 nnoremap <leader>{ viw<esc>a}<esc>bi{<esc>lel
 nnoremap <leader>[ viw<esc>a]<esc>bi[<esc>lel
+" shortcut to undo the above
+nnoremap <leader>cfl bhxelx
 
 " Surround plugin in visual mode - leaves you in normal mode after execution
 vnoremap <leader>" <esc>`>a"<esc>`<i"<esc>`>f"
@@ -89,6 +89,8 @@ vnoremap <leader>' <esc>`>a'<esc>`<i'<esc>`>f'
 vnoremap <leader>( <esc>`>a)<esc>`<i(<esc>`>f)
 vnoremap <leader>{ <esc>`>a}<esc>`<i{<esc>`>f}
 vnoremap <leader>[ <esc>`>a]<esc>`<i[<esc>`>f]
+" shortcut to undo the above
+vnoremap <leader>cfl <esc><esc>lx`<hxe
 
 " To replace $ with ,4 for operator pending motions
 onoremap <leader>4 $
@@ -108,12 +110,22 @@ inoremap <esc> <nop>
 inoremap <leader>m <C-\><C-N><C-w>h
 inoremap <leader>j <C-\><C-N><C-w>j
 inoremap <leader>k <C-\><C-N><C-w>k
-inoremap <leader>l <C-\><C-N><C-w>l
+inoremap <leader>. <C-\><C-N><C-w>l
 nnoremap <leader>m <C-w>h
 nnoremap <leader>j <C-w>j
 nnoremap <leader>k <C-w>k
-nnoremap <leader>l <C-w>l
+nnoremap <leader>. <C-w>l
 
+" for std::cout in cpp
+autocmd filetype cpp nnoremap <leader>co i std::cout << "" << std::endl;<esc>0ci"
+" for std::cin in cpp
+autocmd filetype cpp nnoremap <leader>ci i std::cin >> ;<esc>i
+" for adding curly braces
+autocmd filetype cpp nnoremap <leader>br g^y0A {<esc>o<esc>pa}<esc>O<esc>pa
+" for starting at the same indent on the next line
+autocmd filetype cpp nnoremap cd g^y0o<esc>pa
+" for starting at the same indent on the previous line
+autocmd filetype cpp nnoremap dc g^y0O<esc>pa
 
 " for block commenting in python
 autocmd filetype python vnoremap <leader># <esc>`>o"""<esc>`<O"""<esc>}
@@ -123,6 +135,8 @@ autocmd filetype python vnoremap <leader>3 <esc>`>dd`<dd}
 
 " console log shortcut for javascript files
 autocmd filetype javascript inoremap <leader>cl console.log()<esc>i
+
+autocmd filetype plaintex inoremap <leader>lr <esc>:execute "normal i\\left(\\right)"<CR>%a
 
 " Binding to delete the characters [200~ and [201~ at the beginning and end of
 " text copied from the internet
