@@ -1,68 +1,94 @@
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" SETTING OPTIONS BEGIN
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" No need to be compatible with vi 
-set nocp 	
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" PLUGINS BEGIN
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" For ease of vertical navigation 
+"" Using junegunn/vim-plug to manage plugins
+call plug#begin('~/.vim/plugged')
+
+" renaming files from inside vim                             
+Plug 'danro/rename.vim'
+" automatically alternate of the pair of a bracket or a quote
+Plug 'jiangmiao/auto-pairs'
+" making block comments easier                               
+Plug 'tpope/vim-commentary'
+" highlight the text that was just yanked                    
+Plug 'machakann/vim-highlightedyank'
+" nice statusline                                            
+Plug 'itchyny/lightline.vim'
+" Formatting
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+" project navigation
+Plug 'preservim/nerdtree'
+" Base library for all lua plugins
+Plug 'nvim-lua/plenary.nvim'
+" Fuzzy finder
+Plug 'nvim-telescope/telescope.nvim'
+" For changing things like surrounding inverted commas and html tags
+Plug 'tpope/vim-surround'
+
+call plug#end()
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" PLUGINS END
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"Credit joshdick
+"Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
+"If you're using tmux version 2.2 or later, you can remove the outermost $TMUX check and use tmux's 24-bit color support
+"(see < http://sunaku.github.io/tmux-24bit-color.html#usage > for more information.)
+if (empty($TMUX))
+  if (has("nvim"))
+    "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
+    let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+  endif
+  "For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
+  "Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
+  " < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
+  if (has("termguicolors"))
+    set termguicolors
+  endif
+endif
+
+let g:table_mode_corner_corner='+'
+let g:table_mode_header_fillchar='='
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" SETTING OPTIONS BEGIN
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"" For ease of vertical navigation 
 set rnu
 set number
 
-" Syntax support for different languages 
-syntax on
-syntax enable
+"set shiftwidth=4 tabstop=4 softtabstop=4 expandtab autoindent smartindent smarttab
 
-" Splitting to the right and below is more intuitive 
-set splitright
-set splitbelow
+"set scrolloff=2
+"set noshowmode
 
-"colorscheme pulumi
-colorscheme pablo
-
-" Show the statusline at the bottom of the buffer using string interpolation
-set laststatus=2          " Ensures that the status line will show up at the bottom
-set statusline=%F         " Full path to the file. Lowercase f for relative path
-set statusline+=\ -\      " Separator
-set statusline+=%y        " Filetype of the file
-set statusline+=%=        " Switch to the right side
-set statusline+=%l	  " Current line
-set statusline+=/	  " Separator
-set statusline+=%L,	  " Total lines
-set statusline+=%c        " Number of columns
-
-" For indents that consist of 4 space characters but are entered by pressing the 
-" tab key
-set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
-
-" Allows the user to see five lines below where the cursor is. If someone uses
-" zt in normal mode then the current line under the cursor will not jump to the
-" top but to five lines below the top. Similar with zb
-set scrolloff=5
-
+set nohlsearch
 set incsearch
-"highlight ColorColumn ctermbg=grey
-"set colorcolumn=80
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" SETTING OPTIONS END
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" KEY BINDINGS BEGIN
+"set clipboard=unnamedplus
+
+set undodir=~/.vimdid
+set undofile
+
+"let g:UltiSnipsExpandTrigger="<tab>"
+"" list all snippets for current filetype
+"let g:UltiSnipsListSnippets="<c-l>"
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" SETTING OPTIONS END
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" KEY BINDINGS BEGIN
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let mapleader = ","
 
-" To write the buffer to the file from the homerow
-inoremap <leader>w <esc>:w<cr>
-nnoremap <leader>w <esc>:w<cr>
-
-" To save and quit vim using leader key
-nnoremap <leader>q <esc>:wq<cr>
-inoremap <leader>q <esc>:wq<cr>
-
 " Key binding to open up vimrc for a quick edit
-nnoremap <leader>ev :vsplit $MYVIMRC<cr>
+nnoremap <leader>erc :vsplit ~/.vimrc<cr>
 " Key binding to source vimrc after a quick edit
-nnoremap <leader>sv :source $MYVIMRC<cr>
+nnoremap <leader>src :source ~/.vimrc<cr>
 
 " To create two new lines above the current line and enter insert mode
 nnoremap <leader>o o<esc>o<esc>i
@@ -74,180 +100,66 @@ nnoremap <leader>; mqA;<esc>`q
 " delete two lines at the same time but recover them one at a time
 nnoremap <leader>d ddi<C-G>u<esc>dd
 
-" Surround plugin in normal mode - leaves you in normal mode after execution
-nnoremap <leader>" viw<esc>a"<esc>bi"<esc>lel
-nnoremap <leader>' viw<esc>a'<esc>bi'<esc>lel
-nnoremap <leader>( viw<esc>a)<esc>bi(<esc>lel
-nnoremap <leader>{ viw<esc>a}<esc>bi{<esc>lel
-nnoremap <leader>[ viw<esc>a]<esc>bi[<esc>lel
-" shortcut to undo the above
-nnoremap <leader>cfl bhxelx
+"" Binding to delete the characters [200~ and [201~ at the beginning and end of
+"" text copied from the internet
+"nnoremap <leader>cl :s/\[200\~//<cr>:s/\[201\~//<cr>A
+"vnoremap <leader>cl :s/\[200\~\\|\[201\~//g<cr>
 
-" Surround plugin in visual mode - leaves you in normal mode after execution
-vnoremap <leader>" <esc>`>a"<esc>`<i"<esc>`>f"
-vnoremap <leader>' <esc>`>a'<esc>`<i'<esc>`>f'
-vnoremap <leader>( <esc>`>a)<esc>`<i(<esc>`>f)
-vnoremap <leader>{ <esc>`>a}<esc>`<i{<esc>`>f}
-vnoremap <leader>[ <esc>`>a]<esc>`<i[<esc>`>f]
-" shortcut to undo the above
-vnoremap <leader>cfl <esc><esc>lx`<hxe
+" Start interactive EasyAlign in visual mode (e.g. vipga)
+xmap ga <Plug>(EasyAlign)
 
-" To replace $ with ,4 for operator pending motions
-onoremap <leader>4 $
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
 
-" To replace $ with ,4 for moving to the end of line
-nnoremap <leader>4 $
-vnoremap <leader>4 $
+" Remaps for tab navigation
+nnoremap <silent> <C-t> :tabnext<CR>
+nnoremap <silent> <C-S-t> :tabprevious<CR>
+" Shift to next tab from terminal mode
+tnoremap <silent> <C-t> <C-\><C-N>:tabnext<CR>
+tnoremap <silent> <C-T> <C-\><C-N>:tabprevious<CR>
 
-" To relieve stress on the left hand 
-inoremap jk <esc>
-" To force the use of the above mapping
-inoremap <esc> <nop>
+" Remaps for switching windows
+tnoremap <C-w>h <C-\><C-N><C-w>h
+tnoremap <C-w>j <C-\><C-N><C-w>j
+tnoremap <C-w>k <C-\><C-N><C-w>k
+tnoremap <C-w>l <C-\><C-N><C-w>l
 
-" Key bindings to make navigation between split windows easier "
-" The use of C-k below disables the use of digraphs but I don't see
-" a use for digraphs for myself anyway so I am okay with this
-inoremap <leader>m <C-\><C-N><C-w>h
-inoremap <leader>j <C-\><C-N><C-w>j
-inoremap <leader>k <C-\><C-N><C-w>k
-inoremap <leader>. <C-\><C-N><C-w>l
-nnoremap <leader>m <C-w>h
-nnoremap <leader>j <C-w>j
-nnoremap <leader>k <C-w>k
-nnoremap <leader>. <C-w>l
+nnoremap <leader>n :NERDTree<CR>
+nnoremap <silent> <C-n> :bnext<CR>
+nnoremap <silent> <C-p> :bprevious<CR>
 
-" for std::cout in cpp
-autocmd filetype cpp nnoremap <leader>co i std::cout << "" << std::endl;<esc>0ci"
-" for std::cin in cpp
-autocmd filetype cpp nnoremap <leader>ci i std::cin >> ;<esc>i
-" for adding curly braces
-autocmd filetype cpp nnoremap <leader>br g^y0A {<esc>o<esc>pa}<esc>O<esc>pa
-" for starting at the same indent on the next line
-autocmd filetype cpp nnoremap cd g^y0o<esc>pa
-" for starting at the same indent on the previous line
-autocmd filetype cpp nnoremap dc g^y0O<esc>pa
-
-" for block commenting in python
-autocmd filetype python vnoremap <leader># <esc>`>o"""<esc>`<O"""<esc>}
-
-" for block uncommenting in python
-autocmd filetype python vnoremap <leader>3 <esc>`>dd`<dd}
-
-" console log shortcut for javascript files
-autocmd filetype javascript inoremap <leader>cl console.log()<esc>i
-
-autocmd filetype plaintex inoremap <leader>lr <esc>:execute "normal i\\left(\\right)"<CR>%a
-
-" Binding to delete the characters [200~ and [201~ at the beginning and end of
-" text copied from the internet
-nnoremap <leader>cl :s/\[200\~//<cr>:s/\[201\~//<cr>A
-vnoremap <leader>cl :s/\[200\~\\|\[201\~//g<cr>
-
-" Binding for toggling relative line numbers
-nnoremap <leader>rn :set rnu!<cr>
+nnoremap <silent> <F1> :NERDTreeToggle<CR>
+nnoremap <silent> <F8> :TagbarToggle<CR>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" KEY BINDINGS END
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" KEY BINDINGS END
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" AUTOCOMMANDS BEGIN
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" To save the current view and load it when the file is reopened "
-" autocmd BufWinLeave *.* mkview
-" autocmd BufWinEnter *.* silent loadview
+" Make sure folds are saved after I quit a buffer
+augroup AutoSaveFolds
+    autocmd!
+    autocmd BufWinLeave *.* mkview
+    autocmd BufWinEnter *.* silent! loadview
+augroup END
 
-" To create python files with the shebang already at the top
-let python3path = system("which python3")
-let shebangline = "#!".python3path
-autocmd BufNewFile *.py execute "0put = shebangline"
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" AUTOCOMMANDS END
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+au BufNewFile,BufRead *.py set tabstop=4
+au BufNewFile,BufRead *.py set softtabstop=4
+au BufNewFile,BufRead *.py set shiftwidth=4
+au BufNewFile,BufRead *.py set textwidth=79
+au BufNewFile,BufRead *.py set expandtab
+au BufNewFile,BufRead *.py set autoindent
+au BufNewFile,BufRead *.py set fileformat=unix
 
-function! FormatWalaFunction1()
-    " Move to the line at the start of the visually selected area
-    execute "normal! '<"
+"Cool files. Only for the Stanford compiler course.
+au BufNewFile,BufRead *.cl set ft=cool
 
-    " Create a list that holds the col nos of the equals signs
-    let l:eqSignPos = []
+"Next bit of code is to change the colorscheme of the lightline plugin
+let g:lightline = {
+      \ 'colorscheme': 'selenized_black',
+      \ }
+colorscheme molokai
+set cursorline
 
-    " Loop over all lines to get the col nos of the equals signs
-    for l:i in range(line("'<"), line("'>"))
-        execute "normal! 0f="
-        call add(l:eqSignPos, col("."))
-        execute "normal! j"
-    endfor
+lua << EOF
+-- your lua code here
+EOF
 
-    " Get the max value of the cols of the equals signs
-    let l:maxEqCol = max(eqSignPos)
-
-    " Go back to the beginning of the visually selected area
-    execute "normal! '<"
-
-    for l:colno in l:eqSignPos
-        let l:indentSpaces = ""
-
-        for l:k in range(l:colno + 1, l:maxEqCol)
-            let l:indentSpaces = l:indentSpaces." "
-        endfor
-
-        execute "normal! 0f=i".l:indentSpaces
-        execute "normal! j"
-    endfor
-endfunction
-vnoremap <leader>f1 <esc>:call FormatWalaFunction1()<cr>
-
-function! FormatWalaFunction2()
-    " search inside visually selected area for whatever expression is in the unnamed register
-    " all the extra backslashes are to escape whatever comes after it
-    execute "\/\\%V\\V".@"
-
-    " array for holding the col nos. of all the matches
-    let s:colNos = []
-
-    " move to the first match to find the first col numeber of the visually selected area
-    execute "normal! `<"
-    let s:minCol = col(".")
-
-    " move to the last match and record the line & col number
-    execute "normal! '>".(s:minCol - 1)."ln"
-    call add(s:colNos, col("."))
-    let s:lastLine = line(".")
-    " the line number of the last match is needed for stopping the loops
-
-    " move to the first match and record col number
-    execute "normal! '<"
-    execute "normal! '<".(s:minCol - 1)."l"
-    execute "normal! n"
-"    call insert(s:colNos, col("."), -1)
-"
-"    " move to the second match to start recording all the matches
-"    let s:scm = "normal! j"
-"    ".(s:minCol - 1)."|n"
-"    execute s:scm
-"    echo s:scm
-"
-"    " loop to record the column numbers of all the matches
-"    while line(".") < s:lastLine
-"        call insert(s:colNos, col("."), -1)
-"        execute "normal! j".s:minCol."|n"
-"    endwhile
-"
-"    " maximum column number
-"    let s:maxCol = max(s:colNos)
-"    let s:maxmin = [s:minCol, s:maxCol]
-"    echo s:maxmin
-"
-"    " Move to the first match to start the formatting process
-"    execute "normal! '<".s:minCol."|n"
-"
-"    for s:col in s:colNos
-""    for s:i in range(0, 0)
-""        let s:col = s:colNos[s:i]
-"        for s:space in range(s:col + 1, s:maxCol)
-"            execute "normal! i "
-"        endfor
-"        execute "normal! j".s:minCol."|n"
-"    endfor
-endfunction
-vnoremap <leader>f2 <esc>:call FormatWalaFunction2()<cr>
